@@ -285,12 +285,21 @@ def make_json_str(json_obj, template):
                 stations.append(stations_value)
             stations_str = ',\n\t\t'.join(stations)
 
-            json_rosen = f"""
-\t"type": "{day_type}",
-\t"lineName": "{line_name}",
-\t"stations": [
-\t\t{stations_str}
-\t]"""
+            if day_type == '土休日':
+                day_type = '土日休'
+
+            json_rosen_lines = [
+                f'\n\t"type": "{day_type}",',
+                f'\t"lineName": "{line_name}",'
+            ]
+
+            if line_name in ['名城線（右回り）', '名城線（左回り）']:
+                json_rosen_lines.append('\t"loop": true,')
+
+            json_rosen_lines.append(f'\t"stations": [\n\t\t{stations_str}\n\t]')
+
+            json_rosen = "\n".join(json_rosen_lines)
+
             result.append(json_rosen)
 
     return '{' + '\n},\n{'.join(result) + '\n}'
